@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pagamento | Seu Site</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <section class="container" role="region" aria-label="Painel de pagamento">
+      
+      <aside class="info" aria-labelledby="clienteTitle">
+        <h2 id="clienteTitle">Informações do Cliente</h2>
+
+        <form id="formPagamento" class="form" novalidate>
+          <label class="field">
+            <span class="label-text">Nome completo</span>
+            <input name="nome" type="text" placeholder="Nome completo" required autocomplete="name">
+          </label>
+
+          <label class="field">
+            <span class="label-text">E-mail</span>
+            <input name="email" type="email" placeholder="email@exemplo.com" required autocomplete="email">
+          </label>
+
+          <label class="field">
+            <span class="label-text">Telefone</span>
+            <input name="telefone" type="tel" placeholder="+244 9xx xxx xxx" required autocomplete="tel">
+          </label>
+
+          <label class="field">
+            <span class="label-text">País</span>
+            <select name="pais" required>
+              <option value="">Selecione o país</option>
+              <option>Brasil</option>
+              <option>Angola</option>
+              <option>Portugal</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="label-text">Endereço</span>
+            <input name="endereco" type="text" placeholder="Rua, número, bairro" required autocomplete="street-address">
+          </label>
+        </form>
+
+        <h3 class="small-title">Formas de Pagamento</h3>
+        <div class="payments" aria-hidden="true">
+          <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/visa.svg" alt="Visa">
+          <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/mastercard.svg" alt="Mastercard">
+          <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/paypal.svg" alt="PayPal">
+          <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/pix.svg" alt="Pix">
+        </div>
+      </aside>
+
+     
+      <aside class="resumo" aria-labelledby="resumoTitle">
+        <button id="btnFechar" class="close-btn" aria-label="Fechar painel">✕</button>
+
+        <h2 id="resumoTitle" class="resumo-title">Está incluso:</h2>
+        <p class="valor-total">
+          <strong id="precoTotal">$15</strong><span>/Mês</span>
+        </p>
+
+        <p class="seguro"><svg class="lock" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1a4 4 0 0 0-4 4v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-2V5a4 4 0 0 0-4-4zm-2 7V5a2 2 0 1 1 4 0v3H10z"/></svg> Pagamento seguro</p>
+
+        <hr class="divider">
+
+       
+        <!-- CARD DO PRODUTO (LAÇO) -->
+<div class="card-plano" aria-hidden="true">
+  <div class="card-header">
+    <span class="card-title" id="nomeProduto">Laço Infantil</span>
+    <span class="card-price">
+      <strong id="precoProduto">R$ 0,00</strong>
+    </span>
+  </div>
+
+  <img 
+    id="imagemProduto" 
+    src="" 
+    alt="Laço escolhido"
+    style="width:100%; border-radius:10px; margin:12px 0;"
+  >
+
+  <p class="card-desc" id="descProduto">
+    Laço artesanal feito com carinho 💜
+  </p>
+
+  <ul class="card-list" id="detalhesProduto"></ul>
+</div>
+
+
+        <div class="resumo-valores" aria-hidden="true">
+          <div class="row"><span>Subtotal</span><strong id="subtotal">$15</strong></div>
+          <div class="row"><span>Taxa</span><strong>$0</strong></div>
+          <div class="row total"><span>Total</span><strong id="totalFinal">$15</strong></div>
+        </div>
+
+        <button id="btnAssinar" class="btn-assinar" aria-describedby="processHint">Comprar</button>
+        <p id="processHint" class="hint">Ao clicar, seu pagamento será processado com segurança.</p>
+      </aside>
+    </section>
+  </main>
+
+ 
+  <div class="overlay" id="overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="alertTitle">
+    <div class="alert-box" role="document">
+      <div class="loading" id="loading" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Processando pagamento...</p>
+      </div>
+
+      <div class="result" id="result" tabindex="-1">
+
+  <div class="icon">💜</div>
+
+  <h3 id="alertTitle">Pagamento via PIX</h3>
+
+  <p id="alertMensagem">
+    Copie o código PIX abaixo e cole no app do seu banco.
+  </p>
+
+  <textarea
+    id="codigoPix"
+    readonly
+    style="width:100%; height:100px; margin-top:10px; border-radius:8px; padding:10px;"
+  ></textarea>
+
+  <button
+    onclick="copiarPix()"
+    class="btn-assinar"
+    style="margin-top:10px;"
+  >
+    📋 Copiar código PIX
+  </button>
+
+  <div class="actions">
+    <button id="btnVoltar" class="btn-voltar">Fechar</button>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+
+  <script src="pix.js" defer></script>
+</body>
+</html>

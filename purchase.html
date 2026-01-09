@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - Laços Encantados</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- CABEÇALHO -->
+    <header class="header-container">
+        <div class="header-content">
+            <!-- Logo -->
+           <a href="index.html" class="logo-link">
+    <img 
+        src="logolaço.png" 
+        alt="Entre & Laços" 
+        class="logo-image"
+    >
+</a>
+
+            <!-- Menu de Navegação -->
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Início</a>
+                <a href="catalog.html" class="nav-link">Catálogo</a>
+                <a href="purchase.html" class="nav-link active">Comprar</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- SEÇÃO DE COMPRA -->
+    <section class="purchase-section">
+        <div class="purchase-container">
+            <!-- Botão Voltar -->
+            <a href="catalog.html" class="back-button">
+                ← Voltar ao Catálogo
+            </a>
+
+            <h1 class="purchase-title">Finalizar Compra</h1>
+
+            <div class="purchase-content">
+                <!-- Card: Resumo do Produto -->
+                <div class="product-summary-card" id="productSummary">
+                    <!-- Será preenchido via JavaScript se houver produto -->
+                    <div class="no-product-message">
+                        <p>Nenhum produto selecionado.</p>
+                        <a href="catalog.html" class="cta-button">Ir para Catálogo</a>
+                    </div>
+                </div>
+
+            
+                  
+          <button class="submit-button" onclick="irParaPix()">
+  💳 Prosseguir para Pagamento
+</button>
+
+
+                            <p class="form-note">
+                                * Esta é uma página de exemplo. Configure seu método de pagamento no arquivo script.js
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RODAPÉ -->
+    <footer class="footer-container">
+        <div class="footer-content">
+            <!-- Coluna 1: Sobre -->
+            <div class="footer-column">
+                <h3 class="footer-title">Laços Encantados</h3>
+                <p class="footer-text">Laços artesanais de qualidade para todos os momentos especiais.</p>
+            </div>
+
+            <!-- Coluna 2: Contato -->
+            <div class="footer-column">
+                <h3 class="footer-title">Contato</h3>
+                <div class="footer-contact">
+                    <div class="contact-item">
+                        <span>📧</span>
+                        <span>contato@lacosencantados.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <span>📱</span>
+                        <span>(11) 99999-9999</span>
+                    </div>
+                    <div class="contact-item">
+                        <span>📷</span>
+                        <span>@lacosencantados</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna 3: Links Rápidos -->
+            <div class="footer-column">
+                <h3 class="footer-title">Links Rápidos</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="catalog.html">Catálogo</a></li>
+                    <li><a href="purchase.html">Comprar</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-bottom">
+            <p>&copy; 2024 Laços Encantados. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Inicializar página de compra
+        initPurchasePage();
+    </script>
+</body>
+</html>
