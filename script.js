@@ -242,48 +242,15 @@ function loadSelectedProduct() {
 // Processar formulário de compra
 function handlePurchaseSubmit(event) {
     event.preventDefault();
-    
-    // Coletar dados do formulário
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value
-    };
-    
-    // Produto selecionado
-    const selectedProductJson = localStorage.getItem('selectedProduct');
-    const product = selectedProductJson ? JSON.parse(selectedProductJson) : null;
-    
-    // ============================================
-    // ADICIONE SEU LINK DE PAGAMENTO AQUI
-    // ============================================
-    
-    // OPÇÃO 1: Redirecionar para link externo (banco digital)
-    // Descomente e adicione seu link:
-    // window.location.href = 'SEU_LINK_DO_BANCO_DIGITAL_AQUI';
-    
-    // OPÇÃO 2: Construir link personalizado com dados do produto
-    // const paymentLink = `https://seulink.com?produto=${product.name}&preco=${product.price}`;
-    // window.location.href = paymentLink;
-    
-    // OPÇÃO 3: Para testes - apenas mostrar alerta
-    console.log('Dados do formulário:', formData);
-    console.log('Produto selecionado:', product);
-    
-    alert(`
-        ⚠️ Esta é uma página de exemplo!
-        
-        Configure seu link de pagamento no arquivo script.js
-        na função handlePurchaseSubmit()
-        
-        Dados coletados:
-        - Nome: ${formData.name}
-        - Email: ${formData.email}
-        - Produto: ${product ? product.name : 'Nenhum'}
-    `);
-    
-    return false;
+
+    // LINK DE PAGAMENTO DO NUBANK
+    const linkPagamento = "https://nubank.com.br/cobrar/00020126580014BR.GOV.BCB.PIX0136ad93dda1-ed0d-40ec-82eb-cef7f19c10c652040000530398654041.005802BR5925Gustavo Henrique Felix Co6009SAO PAULO62140510KDmv5VVJNq63048E82";
+
+    // Abre o pagamento em nova aba
+    window.open(linkPagamento, "_blank");
+
+    // Mensagem opcional
+    alert("Após o pagamento, envie o comprovante via WhatsApp para confirmar seu pedido 💜");
 }
 
 // ============================================
