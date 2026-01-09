@@ -125,7 +125,7 @@ function closeOverlay(navigate = false) {
     result.style.display = 'none';
 
     if (lastFocused) lastFocused.focus?.();
-    if (navigate) window.location.href = '/index.html';
+    if (navigate) window.location.href = 'index.html';
   }, 280);
 }
 
@@ -166,7 +166,7 @@ btnVoltar.addEventListener('click', () => {
 
 btnFechar.addEventListener('click', () => {
   const ok = confirm('Deseja realmente cancelar o pagamento?');
-  if (ok) window.location.href = '/index.html';
+  if (ok) window.location.href = 'index.html';
 });
 
 
@@ -223,4 +223,5 @@ function copiarPix() {
 
   alert("Código PIX copiado! 💜\nAgora cole no app do seu banco.");
 }
+
 
