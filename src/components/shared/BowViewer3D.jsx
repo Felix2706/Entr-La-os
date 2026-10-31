@@ -1,14 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
 export default function BowViewer3D({ selection, colors }) {
   const mountRef = useRef(null);
-  const currentColor = colors.find(c => c.id === selection.color)?.name || 'Rosa';
   const colorHex = colors.find(c => c.id === selection.color)?.hex || '#C9748D';
-  const [activeSide, setActiveSide] = useState('frente');
-
-  // Referência para girar o laço via botão se o usuário quiser virar 180 graus
-  const bowPivotRef = useRef(null);
+  const colorName = colors.find(c => c.id === selection.color)?.name || 'Rosa';
 
   useEffect(() => {
     const currentMount = mountRef.current;
@@ -19,10 +15,10 @@ export default function BowViewer3D({ selection, colors }) {
 
     // 1. Scene, Camera, Renderer
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#1F161C');
+    scene.background = new THREE.Color('#FAF7F2');
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-    camera.position.set(0, 0, 4.4);
+    camera.position.set(0, 0, 4.2);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
@@ -32,123 +28,129 @@ export default function BowViewer3D({ selection, colors }) {
 
     currentMount.appendChild(renderer.domElement);
 
-    // 2. Iluminação com sombras para ressaltar o relevo 3D
+    // 2. Luzes de estúdio para realçar o brilho do cetim e reflexos
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xfff5ee, 2.2);
-    keyLight.position.set(3, 5, 4);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    keyLight.position.set(4, 6, 5);
     keyLight.castShadow = true;
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xA78BCD, 1.5);
-    rimLight.position.set(-3, -3, 3);
+    const fillLight = new THREE.PointLight(0xffe4e6, 1.2, 12);
+    fillLight.position.set(-3, -2, 3);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0xA78BCD, 1.0);
+    rimLight.position.set(0, -3, -3);
     scene.add(rimLight);
 
-    const backLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    backLight.position.set(0, 2, -4);
-    scene.add(backLight);
-
-    // 3. Carregar as texturas reais da frente e do verso
+    // 3. Carregar textura do laço de cetim HD transparente
     const textureLoader = new THREE.TextureLoader();
-    const textureFrente = textureLoader.load('laco_real_frente.jpg');
-    const textureVerso = textureLoader.load('laco_real_verso.jpg');
+    const textureBow = textureLoader.load('laco_cetim_hd.png');
+    textureBow.colorSpace = THREE.SRGBColorSpace;
 
-    textureFrente.colorSpace = THREE.SRGBColorSpace;
-    textureVerso.colorSpace = THREE.SRGBColorSpace;
-
-    // Grupo pivô central que o usuário gira em 3D
+    // 4. Grupo Pivô Central 3D
     const bowPivot = new THREE.Group();
-    bowPivotRef.current = bowPivot;
     scene.add(bowPivot);
 
-    // 4. Criação da Malha 3D Curvada para a FRENTE (Double Bow volumoso)
-    // Usamos CylinderGeometry aberto ou Curved Plane com relevo
-    const frontRadius = 2.2;
-    const frontLength = 2.4;
-    const frontHeight = 1.8;
-    const frontGeo = new THREE.CylinderGeometry(
-      frontRadius, frontRadius, frontHeight, 48, 1, true, -Math.PI / 5, (Math.PI / 5) * 2
-    );
-    frontGeo.center();
+    // Calcular cor base selecionada (o PNG original é rosa #F19AB1)
+    const baseSelectedColor = new THREE.Color(colorHex);
 
-    // Material com a foto real da frente + acabamento físico
-    const frontMaterial = new THREE.MeshStandardMaterial({
-      map: textureFrente,
-      roughness: 0.7,
-      metalness: 0.05,
-      side: THREE.FrontSide,
+    // Ajuste de brilho/rugosidade conforme o material
+    const isSatin = selection.material === 'cetim' || !selection.material;
+    const isVelvet = selection.material === 'veludo';
+
+    const bowMaterial = new THREE.MeshStandardMaterial({
+      map: textureBow,
+      color: baseSelectedColor,
+      transparent: true,
+      alphaTest: 0.05,
+      roughness: isSatin ? 0.35 : isVelvet ? 0.9 : 0.6,
+      metalness: isSatin ? 0.25 : 0.05,
+      side: THREE.DoubleSide,
     });
 
-    const frontMesh = new THREE.Mesh(frontGeo, frontMaterial);
-    frontMesh.position.set(0, 0, 0.15);
-    frontMesh.castShadow = true;
-    bowPivot.add(frontMesh);
+    // 5. Construção Tridimensional das Asas e Caudas Curvadas (Relevo Real)
+    // Plano principal frontal com curvatura orgânica
+    const bowGeo = new THREE.PlaneGeometry(3.3, 2.3, 32, 32);
+    
+    // Curvar a geometria para gerar volume 3D realista
+    const pos = bowGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const y = pos.getY(i);
+      // Arco no eixo Z para dar efeito de fita abaulada e nó projetado
+      const distFromCenter = Math.sqrt(x * x + y * y);
+      const curveZ = -Math.pow(x * 0.45, 2) + Math.cos(distFromCenter * 1.5) * 0.15;
+      pos.setZ(i, curveZ);
+    }
+    bowGeo.computeVertexNormals();
 
-    // 5. Nó Central 3D em Relevo (Frente)
-    // Curvatura convexa pronunciada no miolo
-    const knotGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.9, 32, 1, true, -Math.PI / 3, (Math.PI / 3) * 2);
+    const bowMesh = new THREE.Mesh(bowGeo, bowMaterial);
+    bowMesh.castShadow = true;
+    bowPivot.add(bowMesh);
+
+    // Camada de profundidade traseira para dar espessura de tecido duplo
+    const backBowMesh = new THREE.Mesh(bowGeo, bowMaterial.clone());
+    backBowMesh.position.set(0, 0, -0.06);
+    backBowMesh.scale.set(0.98, 0.98, 0.98);
+    bowPivot.add(backBowMesh);
+
+    // 6. Nó Central em Relevo Pronunciado (Volume de Laço Físico)
+    const knotGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.65, 32, 1, false, -Math.PI / 2, Math.PI);
     knotGeo.center();
-    const knotMat = new THREE.MeshStandardMaterial({
-      map: textureFrente,
-      roughness: 0.6,
-      metalness: 0.05,
-    });
-    const knotMesh = new THREE.Mesh(knotGeo, knotMat);
-    knotMesh.position.set(0, 0, 0.42);
-    knotMesh.scale.set(0.7, 0.9, 0.9);
+    const knotMesh = new THREE.Mesh(
+      knotGeo,
+      new THREE.MeshStandardMaterial({
+        color: baseSelectedColor,
+        roughness: isSatin ? 0.3 : 0.85,
+        metalness: isSatin ? 0.2 : 0.05,
+      })
+    );
+    knotMesh.position.set(0, 0, 0.18);
+    knotMesh.scale.set(0.65, 1.1, 0.6);
     bowPivot.add(knotMesh);
 
-    // 6. Camada Traseira: VERSO com a presilha bico de pato real em 3D
-    const backGeo = new THREE.CylinderGeometry(
-      frontRadius, frontRadius, frontHeight, 48, 1, true, Math.PI - Math.PI / 5, (Math.PI / 5) * 2
-    );
-    backGeo.center();
+    // Strass de luxo no miolo central
+    const gemGeo = new THREE.SphereGeometry(0.08, 16, 16);
+    const gemMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.95, roughness: 0.1 });
+    const gemMesh = new THREE.Mesh(gemGeo, gemMat);
+    gemMesh.position.set(0, 0, 0.32);
+    bowPivot.add(gemMesh);
 
-    const backMaterial = new THREE.MeshStandardMaterial({
-      map: textureVerso,
-      roughness: 0.6,
-      metalness: 0.1,
-      side: THREE.FrontSide,
-    });
+    // 7. Base Selecionada (Xuxinha, Bico de Pato, Tiara)
+    if (selection.type === 'xuxinha') {
+      const scrunchieGeo = new THREE.TorusGeometry(0.9, 0.22, 24, 48);
+      const scrunchieMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.9 });
+      const scrunchie = new THREE.Mesh(scrunchieGeo, scrunchieMat);
+      scrunchie.position.set(0, -0.2, -0.5);
+      scrunchie.rotation.x = Math.PI / 4;
+      bowPivot.add(scrunchie);
+    } else if (selection.type === 'bico-de-pato' || selection.type === 'presilha') {
+      const clipGeo = new THREE.BoxGeometry(2.2, 0.35, 0.08);
+      const clipMat = new THREE.MeshStandardMaterial({ color: 0xD4D4D8, metalness: 0.9, roughness: 0.2 });
+      const clip = new THREE.Mesh(clipGeo, clipMat);
+      clip.position.set(0, -0.05, -0.3);
+      clip.rotation.z = Math.PI / 16;
+      bowPivot.add(clip);
+    } else if (selection.type === 'tiara' || selection.type === 'faixa') {
+      const tiaraGeo = new THREE.TorusGeometry(1.5, 0.16, 20, 60, Math.PI * 1.15);
+      const tiaraMat = new THREE.MeshStandardMaterial({
+        color: selection.type === 'tiara' ? 0xF5EDE3 : baseSelectedColor,
+        roughness: 0.4,
+      });
+      const tiara = new THREE.Mesh(tiaraGeo, tiaraMat);
+      tiara.position.set(0, -0.3, -0.25);
+      tiara.rotation.x = Math.PI / 6;
+      bowPivot.add(tiara);
+    }
 
-    const backMesh = new THREE.Mesh(backGeo, backMaterial);
-    backMesh.rotation.y = Math.PI;
-    backMesh.position.set(0, 0, -0.15);
-    backMesh.castShadow = true;
-    bowPivot.add(backMesh);
-
-    // 7. Clipe Metálico 3D no Verso (Bico de Pato em Aço Cromado)
-    const clipGroup = new THREE.Group();
-    clipGroup.position.set(0, -0.05, -0.42);
-    clipGroup.rotation.y = Math.PI;
-    clipGroup.rotation.z = Math.PI / 18;
-
-    const clipMat = new THREE.MeshStandardMaterial({
-      color: 0xDDDDDD,
-      metalness: 0.95,
-      roughness: 0.15,
-    });
-
-    // Corpo da presilha
-    const clipBaseGeo = new THREE.BoxGeometry(2.1, 0.38, 0.08);
-    const clipBaseMesh = new THREE.Mesh(clipBaseGeo, clipMat);
-    clipGroup.add(clipBaseMesh);
-
-    // Frisos de mola da presilha
-    const springGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.38, 16);
-    springGeo.center();
-    const springMesh = new THREE.Mesh(springGeo, clipMat);
-    springMesh.position.set(0.9, 0, 0.06);
-    clipGroup.add(springMesh);
-
-    bowPivot.add(clipGroup);
-
-    // Escala conforme tamanho (P, M, G)
+    // Escala dinâmica conforme tamanho escolhido (P, M, G)
     const scale = selection.size === 'P' ? 0.78 : selection.size === 'G' ? 1.25 : 1.0;
     bowPivot.scale.set(scale, scale, scale);
 
-    // 8. Controles de Órbita 3D e Rotação Manual Arrastando o Mouse
+    // 8. Interação de Rotação 3D ao clicar e arrastar (Mouse e Touch)
     let isDragging = false;
     let prevMousePos = { x: 0, y: 0 };
 
@@ -165,15 +167,14 @@ export default function BowViewer3D({ selection, colors }) {
       bowPivot.rotation.y += deltaX * 0.012;
       bowPivot.rotation.x += deltaY * 0.008;
 
-      // Trava de inclinação para não virar de ponta cabeça
-      bowPivot.rotation.x = Math.max(-0.6, Math.min(0.6, bowPivot.rotation.x));
+      // Limitar inclinação vertical para ângulo estético
+      bowPivot.rotation.x = Math.max(-0.55, Math.min(0.55, bowPivot.rotation.x));
 
       prevMousePos = { x: e.clientX, y: e.clientY };
     };
 
     const onMouseUp = () => { isDragging = false; };
 
-    // Suporte a Touch em Smartphones
     const onTouchStart = (e) => {
       if (e.touches.length === 1) {
         isDragging = true;
@@ -187,7 +188,7 @@ export default function BowViewer3D({ selection, colors }) {
 
       bowPivot.rotation.y += deltaX * 0.012;
       bowPivot.rotation.x += deltaY * 0.008;
-      bowPivot.rotation.x = Math.max(-0.6, Math.min(0.6, bowPivot.rotation.x));
+      bowPivot.rotation.x = Math.max(-0.55, Math.min(0.55, bowPivot.rotation.x));
 
       prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     };
@@ -202,7 +203,7 @@ export default function BowViewer3D({ selection, colors }) {
     window.addEventListener('touchmove', onTouchMove, { passive: true });
     window.addEventListener('touchend', onTouchEnd);
 
-    // 9. Loop de animação com respiração flutuante
+    // 9. Loop de Animação com Respiração Flutuante
     let animId;
     let clock = new THREE.Clock();
 
@@ -210,10 +211,11 @@ export default function BowViewer3D({ selection, colors }) {
       animId = requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
 
-      // Oscilação suave em levitação se não estiver arrastando
       if (!isDragging) {
-        bowPivot.position.y = Math.sin(elapsed * 1.5) * 0.08;
-        bowPivot.rotation.y += 0.004; // Rotação panorâmica lenta e elegante
+        // Efeito de flutuação suave
+        bowPivot.position.y = Math.sin(elapsed * 1.8) * 0.06;
+        // Rotação suave contínua para exibir o cetim
+        bowPivot.rotation.y += 0.004;
       }
 
       renderer.render(scene, camera);
@@ -235,68 +237,39 @@ export default function BowViewer3D({ selection, colors }) {
       }
       renderer.dispose();
     };
-  }, [selection.size, selection.color, selection.material]);
-
-  // Função para girar 180° instantaneamente para a frente ou verso
-  const flipTo = (side) => {
-    setActiveSide(side);
-    if (bowPivotRef.current) {
-      const targetRotationY = side === 'frente' ? 0 : Math.PI;
-      bowPivotRef.current.rotation.y = targetRotationY;
-      bowPivotRef.current.rotation.x = 0;
-    }
-  };
+  }, [selection.type, selection.size, selection.color, selection.material, colorHex]);
 
   return (
-    <div className="relative w-full h-84 md:h-96 rounded-3xl overflow-hidden bg-gradient-to-b from-[#24151E] via-[#1A1015] to-[#10090D] border border-primary/30 shadow-2xl flex flex-col justify-between">
+    <div className="relative w-full h-84 md:h-96 rounded-3xl overflow-hidden bg-gradient-to-b from-white via-secondary/60 to-secondary border border-border shadow-inner flex flex-col justify-between">
       
-      {/* Barra Superior */}
+      {/* Top Header */}
       <div className="absolute top-3 inset-x-4 z-20 flex items-center justify-between pointer-events-none">
-        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/20">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-[11px] font-body font-semibold text-white">
-            Modelo 3D Realista • Gire em 360°
+        <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-sm border border-border/80">
+          <span className="w-2.5 h-2.5 rounded-full bg-primary animate-ping" />
+          <span className="text-[11px] font-body font-semibold text-dark">
+            Simulador 3D em Tempo Real • Gire Livremente
           </span>
         </div>
 
-        {/* Botões Rápidos para Frente / Verso */}
-        <div className="flex items-center gap-1.5 pointer-events-auto">
-          <button
-            onClick={() => flipTo('frente')}
-            className={`text-xs font-body font-bold px-3 py-1 rounded-full transition-all ${
-              activeSide === 'frente'
-                ? 'bg-primary text-white shadow-md'
-                : 'bg-white/15 text-white/80 hover:bg-white/25'
-            }`}
-          >
-            Frente
-          </button>
-          <button
-            onClick={() => flipTo('verso')}
-            className={`text-xs font-body font-bold px-3 py-1 rounded-full transition-all ${
-              activeSide === 'verso'
-                ? 'bg-primary text-white shadow-md'
-                : 'bg-white/15 text-white/80 hover:bg-white/25'
-            }`}
-          >
-            Verso (Presilha)
-          </button>
+        <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-sm border border-border/80 pointer-events-auto">
+          <span className="w-3.5 h-3.5 rounded-full border border-border" style={{ background: colorHex }} />
+          <span className="text-xs font-body font-bold text-dark">{colorName}</span>
         </div>
       </div>
 
-      {/* Canvas Three.js Onde o Laço 3D Gira */}
+      {/* Canvas 3D */}
       <div
         ref={mountRef}
         className="w-full h-full cursor-grab active:cursor-grabbing flex items-center justify-center"
       />
 
-      {/* Barra Inferior com Legenda */}
+      {/* Bottom Footer com Dicas */}
       <div className="absolute bottom-3 inset-x-4 z-20 flex items-center justify-between pointer-events-none">
-        <span className="text-[10px] text-white/70 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
-          💡 Clique e arraste para inspecionar em qualquer ângulo
+        <span className="text-[10px] text-medium font-body bg-white/90 backdrop-blur-md px-3 py-1 rounded-lg border border-border/60 shadow-sm">
+          💡 Clique e arraste para girar em 360°
         </span>
-        <span className="text-[11px] font-accent font-bold text-primary-light bg-black/40 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10">
-          Feito à mão • Gorgurão Duplo
+        <span className="text-[11px] font-accent font-bold text-primary bg-white/95 backdrop-blur-md px-3 py-1 rounded-lg border border-border/60 shadow-sm uppercase">
+          {selection.type ? selection.type.replace(/-/g, ' ') : 'BICO DE PATO'} • TAMANHO {selection.size || 'M'}
         </span>
       </div>
 
