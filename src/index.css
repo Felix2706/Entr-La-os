@@ -363,3 +363,9 @@
   box-shadow: 0 20px 35px -10px rgba(201, 116, 141, 0.25), 0 0 20px rgba(167, 139, 205, 0.15);
 }
 
+/* Vinheta de Campanha Cinematográfica */
+.bg-radial-vignette {
+  background: radial-gradient(circle at 50% 50%, rgba(12, 7, 10, 0) 30%, rgba(12, 7, 10, 0.75) 75%, rgba(12, 7, 10, 0.95) 100%);
+}
+
+

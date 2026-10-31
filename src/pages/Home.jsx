@@ -1,4 +1,4 @@
-import HeroSection from '../components/home/HeroSection';
+import CinematicHero from '../components/home/CinematicHero';
 import FeaturedProducts from '../components/home/FeaturedProducts';
 import CategoriesSection from '../components/home/CategoriesSection';
 import PersonalizerBanner from '../components/home/PersonalizerBanner';
@@ -9,8 +9,8 @@ import RibbonDivider from '../components/shared/RibbonDivider';
 export default function Home() {
   return (
     <>
-      <HeroSection />
-      <RibbonDivider className="-my-4 relative z-20" />
+      <CinematicHero />
+      <RibbonDivider className="-my-3 relative z-20" />
       <FeaturedProducts />
       <RibbonDivider className="my-2 opacity-70" />
       <CategoriesSection />
