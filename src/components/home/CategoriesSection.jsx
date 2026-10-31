@@ -4,79 +4,88 @@ import { categories } from '../../data/products';
 
 export default function CategoriesSection() {
   return (
-    <section className="py-20 bg-secondary">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-12">
+    <section className="py-20 bg-gradient-to-b from-white via-secondary/40 to-white relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        
+        {/* Cabeçalho da Seção com Efeito Scroll Reveal */}
+        <div className="text-center max-w-2xl mx-auto mb-14">
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-accent text-primary text-xl mb-2"
+            className="font-accent text-primary text-2xl font-bold mb-2"
           >
-            Explore nossa coleção
+            Descubra cada detalhe
           </motion.p>
           <motion.h2
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="section-title"
+            className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-dark"
           >
-            Categorias
+            Categorias em Destaque
           </motion.h2>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="w-24 h-1 bg-gradient-to-r from-primary to-accent mx-auto mt-4 rounded-full"
+          />
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {/* Grid com Imagens Reais de Cada Categoria e Hover Elegante */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {categories.map((cat, index) => (
             <motion.div
               key={cat.id}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.45, delay: index * 0.07 }}
+              transition={{ duration: 0.5, delay: index * 0.08, ease: 'easeOut' }}
             >
               <Link
                 to={`/catalogo?categoria=${cat.id}`}
-                className="group block bg-white rounded-2xl p-6 text-center border border-border shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 ease-out hover:border-primary/30"
+                className="group relative block rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-400 bg-white border border-border/80 hover:border-primary/40 transform hover:-translate-y-2"
               >
-                <motion.div
-                  whileHover={{ scale: 1.15, rotate: [0, -5, 5, 0] }}
-                  transition={{ duration: 0.4 }}
-                  className="text-4xl mb-3 inline-block"
-                >
-                  {cat.emoji}
-                </motion.div>
-                <h3 className="font-display font-semibold text-dark text-sm md:text-base group-hover:text-primary transition-colors">
-                  {cat.name}
-                </h3>
-                <p className="font-body text-medium text-xs mt-1">
-                  {cat.description}
-                </p>
+                {/* Imagem de Fundo com Zoom suave */}
+                <div className="relative h-44 overflow-hidden bg-secondary">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-dark/80 via-dark/20 to-transparent" />
+                  
+                  {/* Badge Emoji */}
+                  <div className="absolute top-3 right-3 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-xl shadow-md group-hover:rotate-12 transition-transform">
+                    {cat.emoji}
+                  </div>
+
+                  {/* Nome sobre a imagem */}
+                  <div className="absolute bottom-3 left-4 right-4">
+                    <h3 className="font-display font-bold text-white text-lg drop-shadow-md">
+                      {cat.name}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Conteúdo textual inferior */}
+                <div className="p-4 bg-white flex items-center justify-between">
+                  <p className="font-body text-xs text-medium line-clamp-1">
+                    {cat.description}
+                  </p>
+                  <span className="text-primary font-bold text-sm ml-2 group-hover:translate-x-1 transition-transform">
+                    →
+                  </span>
+                </div>
               </Link>
             </motion.div>
           ))}
-
-          {/* "Ver Tudo" card */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.45, delay: categories.length * 0.07 }}
-          >
-            <Link
-              to="/catalogo"
-              className="group block bg-gradient-primary rounded-2xl p-6 text-center shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300"
-            >
-              <div className="text-4xl mb-3">✨</div>
-              <h3 className="font-display font-semibold text-white text-sm md:text-base">
-                Ver Tudo
-              </h3>
-              <p className="font-body text-white/80 text-xs mt-1">
-                Todos os laços
-              </p>
-            </Link>
-          </motion.div>
         </div>
+
       </div>
     </section>
   );

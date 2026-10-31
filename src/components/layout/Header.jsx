@@ -40,24 +40,22 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <img 
-              src="/logolaco.png" 
-              alt="Entre & Laços" 
-              className="h-10 w-auto object-contain rounded-full bg-white/80 p-0.5 shadow-sm group-hover:scale-105 transition-transform"
-              onError={(e) => {
-                e.target.style.display = 'none';
-                if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
-              }}
-            />
-            <div className="w-10 h-10 bg-gradient-primary rounded-full hidden items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-              <span className="text-white text-xl">🎀</span>
+            <div className="relative w-12 h-12 rounded-full overflow-hidden shadow-md border-2 border-primary/30 group-hover:scale-105 transition-transform bg-secondary">
+              <img 
+                src="logo.jpg" 
+                alt="Entre & Laços - Logo Oficial" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = 'logolaco.png';
+                }}
+              />
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="font-accent text-xl md:text-2xl text-primary font-bold tracking-wide">
+              <span className="font-accent text-2xl md:text-3xl text-primary font-bold tracking-wide">
                 Entre &amp; Laços
               </span>
-              <span className="text-xs text-medium font-body hidden sm:block">
-                Artesanato com Amor
+              <span className="text-[11px] text-medium font-body hidden sm:block -mt-1 font-medium">
+                Feito à mão com carinho
               </span>
             </div>
           </Link>

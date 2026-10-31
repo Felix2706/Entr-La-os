@@ -18,7 +18,7 @@ export default function ProductCard({ product, index = 0 }) {
     });
     setAddedEffect(true);
     setTimeout(() => setAddedEffect(false), 600);
-    toast.success(`${product.name} adicionado! 🎀`, {
+    toast.success(`${product.name} adicionado ao carrinho! 🎀`, {
       style: {
         background: '#fff',
         color: '#2D2D2D',
@@ -29,39 +29,45 @@ export default function ProductCard({ product, index = 0 }) {
   };
 
   const tagColors = {
-    'destaque': 'bg-primary/10 text-primary',
-    'novo': 'bg-accent/10 text-accent',
-    'bestseller': 'bg-success/10 text-success',
-    'premium': 'bg-amber-100 text-amber-700',
-    'kit': 'bg-blue-100 text-blue-700',
-    'oferta': 'bg-red-100 text-red-600',
-    'popular': 'bg-purple-100 text-purple-700',
+    'destaque': 'bg-primary/10 text-primary border-primary/20',
+    'novo': 'bg-accent/15 text-accent-dark border-accent/30',
+    'bestseller': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    'luxo': 'bg-amber-50 text-amber-800 border-amber-200',
+    'kit': 'bg-blue-50 text-blue-700 border-blue-200',
+    'artesanal': 'bg-rose-50 text-rose-700 border-rose-200',
+    'baby': 'bg-purple-50 text-purple-700 border-purple-200',
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.45, delay: index * 0.07, ease: 'easeOut' }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.5, delay: (index % 4) * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      className="h-full"
     >
-      <Link to={`/produto/${product.id}`} className="block group">
-        <div className="bg-white rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-350 ease-out">
-          {/* Image */}
-          <div className="relative aspect-square overflow-hidden bg-secondary">
+      <Link to={`/produto/${product.id}`} className="block group h-full">
+        <div className="bg-white rounded-2xl overflow-hidden border border-border/80 shadow-sm hover:shadow-xl hover:border-primary/30 transition-all duration-400 ease-out flex flex-col h-full transform hover:-translate-y-2">
+          
+          {/* Container da Imagem com Shimmer Effect no hover */}
+          <div className="relative aspect-square overflow-hidden bg-secondary shimmer-effect">
             <img
               src={product.images[0]}
               alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+              className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
               loading="lazy"
             />
-            {/* Tags */}
+
+            {/* Overlay sutil com gradiente */}
+            <div className="absolute inset-0 bg-gradient-to-t from-dark/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+            {/* Badges / Tags */}
             {product.tags && product.tags.length > 0 && (
-              <div className="absolute top-2 left-2 flex flex-wrap gap-1">
+              <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1 z-10">
                 {product.tags.slice(0, 2).map(tag => (
                   <span
                     key={tag}
-                    className={`text-xs font-semibold font-body px-2 py-0.5 rounded-full ${tagColors[tag] || 'bg-secondary text-medium'}`}
+                    className={`text-[11px] font-semibold font-body px-2.5 py-0.5 rounded-full border shadow-sm backdrop-blur-sm ${tagColors[tag] || 'bg-white/90 text-medium'}`}
                   >
                     {tag}
                   </span>
@@ -69,58 +75,55 @@ export default function ProductCard({ product, index = 0 }) {
               </div>
             )}
 
-            {/* Quick add button (visible on hover) */}
-            <div className="absolute inset-0 bg-dark/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
+            {/* Botão flutuante rápido para adicionar ao carrinho */}
+            <div className="absolute inset-x-0 bottom-3 flex justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-10 px-4">
               <motion.button
-                animate={addedEffect ? { scale: [1, 1.2, 0.9, 1] } : {}}
-                transition={{ duration: 0.4 }}
+                whileTap={{ scale: 0.95 }}
+                animate={addedEffect ? { scale: [1, 1.15, 0.95, 1] } : {}}
                 onClick={handleAddToCart}
-                className="bg-white text-primary font-semibold text-sm px-5 py-2 rounded-full shadow-lg hover:bg-primary hover:text-white transition-colors duration-200"
+                className="w-full bg-white/95 backdrop-blur-md text-primary font-bold text-xs py-2.5 rounded-xl shadow-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-1.5 border border-primary/20"
               >
-                + Carrinho
+                <span>Adicionar</span>
+                <span>🎀</span>
               </motion.button>
             </div>
           </div>
 
-          {/* Info */}
-          <div className="p-4">
-            <h3 className="font-display text-dark font-semibold text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-              {product.name}
-            </h3>
-            <p className="font-body text-medium text-xs mt-1 capitalize">{product.category?.replace(/-/g, ' ')}</p>
+          {/* Dados do Produto */}
+          <div className="p-4 flex flex-col flex-grow justify-between">
+            <div>
+              <p className="font-body text-medium text-xs uppercase tracking-wider font-semibold">
+                {product.category?.replace(/-/g, ' ')}
+              </p>
+              
+              <h3 className="font-display text-dark font-bold text-base mt-1 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+                {product.name}
+              </h3>
 
-            {/* Stars */}
-            <div className="flex items-center gap-1 mt-2">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <svg
-                  key={i}
-                  width="12" height="12" viewBox="0 0 24 24"
-                  fill={i < product.rating ? '#C9748D' : 'none'}
-                  stroke={i < product.rating ? '#C9748D' : '#EDE0D4'}
-                  strokeWidth="2"
-                >
-                  <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
-                </svg>
-              ))}
-              <span className="text-xs text-medium font-body ml-0.5">({product.reviews})</span>
+              {/* Avaliações */}
+              <div className="flex items-center gap-1 mt-2">
+                <div className="flex text-primary text-xs">
+                  {'★'.repeat(product.rating || 5)}
+                </div>
+                <span className="text-[11px] text-medium font-body ml-1">({product.reviews})</span>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between mt-3">
-              <span className="font-display text-primary font-bold text-lg">
-                {product.priceFormatted}
+            {/* Rodapé do Card */}
+            <div className="flex items-center justify-between mt-4 pt-3 border-t border-border/50">
+              <div>
+                <span className="text-[10px] text-medium block uppercase tracking-wide">Valor</span>
+                <span className="font-display text-primary font-bold text-lg leading-none">
+                  {product.priceFormatted}
+                </span>
+              </div>
+
+              <span className="text-xs text-primary font-body font-semibold group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
+                Ver detalhes →
               </span>
-              <motion.button
-                whileTap={{ scale: 0.88 }}
-                animate={addedEffect ? { scale: [1, 1.25, 0.9, 1] } : {}}
-                onClick={handleAddToCart}
-                className="w-8 h-8 bg-primary/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors duration-200 group/btn"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-primary group-hover/btn:text-white transition-colors">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-              </motion.button>
             </div>
           </div>
+
         </div>
       </Link>
     </motion.div>

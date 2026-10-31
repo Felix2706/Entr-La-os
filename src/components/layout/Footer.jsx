@@ -7,11 +7,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center">
-                <span className="text-xl">🎀</span>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full overflow-hidden border border-white/20 bg-secondary flex-shrink-0">
+                <img src="logo.jpg" alt="Logo" className="w-full h-full object-cover" />
               </div>
-              <span className="font-accent text-2xl text-primary-light">Entre &amp; Laços</span>
+              <div>
+                <span className="font-accent text-2xl text-primary-light block">Entre &amp; Laços</span>
+                <span className="text-[11px] text-white/60 font-body">Feito à mão com carinho</span>
+              </div>
             </div>
             <p className="font-body text-white/70 text-sm leading-relaxed">
               Laços artesanais feitos com amor e dedicação. Cada peça é única, criada para tornar momentos especiais ainda mais bonitos.
