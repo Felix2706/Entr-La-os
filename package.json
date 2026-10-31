@@ -10,11 +10,15 @@
     "preview": "node ./node_modules/vite/bin/vite.js preview"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "canvas-confetti": "^1.9.4",
     "framer-motion": "^14.9.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-hot-toast": "^2.6.1",
     "react-router-dom": "^7.18.5",
+    "three": "^0.187.0",
     "zustand": "^5.0.16"
   },
   "devDependencies": {
