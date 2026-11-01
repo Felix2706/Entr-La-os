@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { categories, colors, materials } from '../data/products';
-import BowViewer3D from '../components/shared/BowViewer3D';
+import BowVectorPreview from '../components/shared/BowVectorPreview';
 import confetti from 'canvas-confetti';
 
 const sizes = [
@@ -94,10 +94,10 @@ export default function Personalizer() {
         <div className="text-center mb-8">
           <p className="font-accent text-primary text-2xl font-bold mb-1">Ateliê Sob Medida</p>
           <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-dark">
-            Monte Seu Laço em 3D
+            Monte o Seu Laço
           </h1>
           <p className="font-body text-medium mt-2 text-sm sm:text-base">
-            Visualize em tempo real como o laço ou acessório vai ficar conforme suas escolhas!
+            Veja a pré-visualização ilustrada do seu acessório em tempo real conforme suas escolhas!
           </p>
         </div>
 
@@ -283,11 +283,11 @@ export default function Personalizer() {
             </div>
           </div>
 
-          {/* Lado Direito: Preview 3D Interativo + Resumo (5 colunas) */}
+          {/* Lado Direito: Preview Ilustrado em Vetor + Resumo (5 colunas) */}
           <div className="lg:col-span-5 flex flex-col gap-6 sticky top-24">
             
-            {/* O Canvas 3D em tempo real */}
-            <BowViewer3D selection={selection} colors={colors} />
+            {/* O Laço Ilustrado Vetorial em tempo real */}
+            <BowVectorPreview selection={selection} colors={colors} />
 
             {/* Cartão de Resumo das Opções */}
             <div className="bg-white rounded-3xl p-5 shadow-sm border border-border">
